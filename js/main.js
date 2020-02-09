@@ -17,6 +17,7 @@ var INVERT_MAX = 100;
 var BLUR_MAX = 3;
 var BRIGHTNESS_MAX = 3;
 var BRIGHTNESS_MIN = 1;
+var HIDDEN_CLASS = 'hidden';
 
 var MESSAGES = [
   'Всё отлично!',
@@ -154,7 +155,7 @@ var onScaleControlClick = function (min, max, step, value) {
 };
 
 var onCloseWindowClick = function (element) {
-  element.classList.add('hidden');
+  element.classList.add(HIDDEN_CLASS);
   document.body.classList.remove('modal-open');
 };
 
@@ -195,15 +196,15 @@ picturesHome.addEventListener('click', function (evt) {
   if (picture) {
     createBigPicture(bigPictureEl, firstPhoto);
     createBigPictureComment(bigPictureEl, firstPhoto);
-    bigPictureEl.classList.remove('hidden');
+    bigPictureEl.classList.remove(HIDDEN_CLASS);
   }
 });
 
 var socialCommentCount = document.querySelector('.social__comment-count');
 var commentsLoader = document.querySelector('.comments-loader');
 
-socialCommentCount.classList.add('hidden');
-commentsLoader.classList.add('hidden');
+socialCommentCount.classList.add(HIDDEN_CLASS);
+commentsLoader.classList.add(HIDDEN_CLASS);
 
 var imgUploadOverlay = document.querySelector('.img-upload__overlay');
 var bigPictureClose = document.querySelector('.big-picture__cancel');
@@ -217,6 +218,8 @@ var effectsList = document.querySelector('.effects__list');
 var effectLevelPin = document.querySelector('.effect-level__pin');
 var effectLevelLine = document.querySelector('.effect-level__line');
 var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
+var textHashtags = document.querySelector('.text__hashtags');
+var textDescription = document.querySelector('.text__description');
 
 var effects = {
   'chrome': getGrayscale,
@@ -229,15 +232,71 @@ var effects = {
   }
 };
 
+textHashtags.addEventListener('input', function (evt) {
+  var inputElement = evt.target;
+  var hashtags = inputElement.value.trim().split(' ');
+  var newHashtags = [];
+  function hashtagsValidation() {
+    if (hashtags.length > 5) {
+      return 'Нельзя указать больше пяти хэш-тегов';
+    }
+
+    for (var i = 0; i < hashtags.length; i++) {
+      var hashtag = hashtags[i];
+      if (hashtag[0] !== '#') {
+        return 'Укажите символ # в начале хэштега';
+      }
+      console.log(hashtag.length);
+      if (hashtag.length <= 1 || hashtag.length > 20) {
+        return 'Длина хэштега должна быть от 1 до 20 символов';
+      }
+      var hashtagValidator = hashtag.match(/[\d\wа-я]/iug) || [];
+      if (hashtag.slice(1) !== hashtagValidator.join('')) {
+        return 'Строка после решётки должна состоять только из букв и чисел';
+      }
+      if (newHashtags.includes(hashtag.toLowerCase())) {
+        return 'Нельзя использовать один и тот же хэштег два и более раз';
+      }
+      newHashtags.push(hashtag.toLowerCase());
+    }
+  }
+
+  var errorMessage = hashtagsValidation() || '';
+  inputElement.setCustomValidity(errorMessage);
+  inputElement.reportValidity();
+});
+
+textDescription.addEventListener('input', function (evt) {
+  var textAreaElement = evt.target;
+
+  if (textAreaElement.value.length > 140) {
+    textAreaElement.setCustomValidity('Длина комментария должна быть не больше 140 символов');
+    textAreaElement.reportValidity();
+  }
+});
+
+textHashtags.addEventListener('keydown', function (evt) {
+  if (evt.key === ESC_KEY) {
+    evt.stopPropagation();
+  }
+});
+
+textDescription.addEventListener('keydown', function (evt) {
+  if (evt.key === ESC_KEY) {
+    evt.stopPropagation();
+  }
+});
+
 effectsList.addEventListener('change', function (evt) {
   var effect = evt.target.value;
+
   imgUploadPreview.classList.value = 'img-upload__preview effects__preview--' + effect;
   imgUploadPreview.style.filter = '';
 
   if (effect === 'none') {
-    imgUploadEffectLevel.classList.add('hidden');
+    imgUploadEffectLevel.classList.add(HIDDEN_CLASS);
   } else {
-    imgUploadEffectLevel.classList.remove('hidden');
+    imgUploadEffectLevel.classList.remove(HIDDEN_CLASS);
   }
 });
 
@@ -245,11 +304,12 @@ effectLevelPin.addEventListener('mouseup', function (evt) {
   var levelPinCoordinate = evt.target.getBoundingClientRect();
   var levelLineCoordinate = effectLevelLine.getBoundingClientRect();
   var levelValue = levelPinCoordinate.x - levelLineCoordinate.x;
-
   var effect = document.querySelector('.effects__radio:checked');
+
   if (effect) {
     var filter = effects[effect.value];
     var levelPart = levelValue / levelLineCoordinate.width;
+
     imgUploadPreview.style.filter = filter(levelPart);
   }
 });
@@ -277,20 +337,20 @@ document.addEventListener('keydown', function (evt) {
 });
 
 uploadFile.addEventListener('change', function () {
-  imgUploadOverlay.classList.remove('hidden');
+  imgUploadOverlay.classList.remove(HIDDEN_CLASS);
   document.body.classList.add('modal-open');
 });
 
 imgUploadCancel.addEventListener('click', function () {
   onCloseWindowClick(imgUploadOverlay);
-  uploadFile.value = undefined;
+  uploadFile.value = '';
   imgUploadPreview.style.transform = 'scale(1)';
 });
 
 document.addEventListener('keydown', function (evt) {
   if (evt.key === ESC_KEY) {
     onCloseWindowClick(imgUploadOverlay);
-    uploadFile.value = undefined;
+    uploadFile.value = '';
     imgUploadPreview.style.transform = 'scale(1)';
   }
 });
