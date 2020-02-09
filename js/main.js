@@ -179,6 +179,16 @@ var getBrightness = function (value) {
   return 'brightness(' + value * BRIGHTNESS_MAX + BRIGHTNESS_MIN + ')';
 };
 
+var onSetupSubmitClick = function (evt, form) {
+  form.submit();
+};
+
+var onSetupSubmitEnterKeydown = function (evt, form) {
+  if (evt.key === ENTER_KEY) {
+    onSetupSubmitClick(evt, form);
+  }
+};
+
 // создаем фоточки
 var photosList = createPhotos(PHOTOS_COUNT);
 
@@ -220,6 +230,8 @@ var effectLevelLine = document.querySelector('.effect-level__line');
 var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
 var textHashtags = document.querySelector('.text__hashtags');
 var textDescription = document.querySelector('.text__description');
+var imgUploadForm = document.querySelector('.img-upload__form');
+var imgUploadSubmit = document.querySelector('.img-upload__submit');
 
 var effects = {
   'chrome': getGrayscale,
@@ -234,7 +246,11 @@ var effects = {
 
 textHashtags.addEventListener('input', function (evt) {
   var inputElement = evt.target;
-  var hashtags = inputElement.value.trim().split(' ');
+  var hashtags = inputElement.value.trim();
+  if (hashtags.length <= 0) {
+    return;
+  }
+  hashtags = hashtags.split(' ');
   var newHashtags = [];
   function hashtagsValidation() {
     if (hashtags.length > 5) {
@@ -262,6 +278,7 @@ textHashtags.addEventListener('input', function (evt) {
   }
 
   var errorMessage = hashtagsValidation() || '';
+  console.log(errorMessage);
   inputElement.setCustomValidity(errorMessage);
   inputElement.reportValidity();
 });
@@ -354,4 +371,17 @@ document.addEventListener('keydown', function (evt) {
     imgUploadPreview.style.transform = 'scale(1)';
   }
 });
+
+imgUploadSubmit.addEventListener('click', function (evt) {
+  if (imgUploadForm.checkValidity()) {
+    onSetupSubmitClick(evt, imgUploadForm);
+  }
+});
+
+imgUploadSubmit.addEventListener('keydown', function (evt) {
+  if (imgUploadForm.checkValidity()) {
+    onSetupSubmitEnterKeydown(evt, imgUploadForm);
+  }
+});
+
 
