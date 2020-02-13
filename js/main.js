@@ -8,16 +8,44 @@ var MAX_AVATARS = 6;
 var MIN_COMMENTS = 2;
 var MAX_COMMENTS = 9;
 var ESC_KEY = 'Escape';
+var ENTER_KEY = 'Enter';
 var MIN_SCALE = 25;
 var MAX_SCALE = 100;
 var SCALE_STEP = 25;
-var GRAYSCALE_MAX = 1;
-var SEPIA_MAX = 1;
-var INVERT_MAX = 100;
-var BLUR_MAX = 3;
-var BRIGHTNESS_MAX = 3;
-var BRIGHTNESS_MIN = 1;
 var HIDDEN_CLASS = 'hidden';
+var EFFECTS = {
+  chrome: {
+    min: 0,
+    max: 1,
+    unit: '',
+    filter: 'grayscale'
+  },
+  'sepia': {
+    min: 0,
+    max: 1,
+    unit: '',
+    filter: 'sepia'
+  },
+  'marvin': {
+    min: 0,
+    max: 100,
+    unit: '%',
+    filter: 'invert'
+  },
+  'phobos': {
+    min: 0,
+    max: 3,
+    unit: 'px',
+    filter: blur
+  },
+  'heat': {
+    min: 1,
+    max: 3,
+    unit: '',
+    filter: 'brightness'
+  },
+  'none': undefined
+};
 
 var MESSAGES = [
   'Всё отлично!',
@@ -159,24 +187,9 @@ var onCloseWindowClick = function (element) {
   document.body.classList.remove('modal-open');
 };
 
-var getGrayscale = function (value) {
-  return 'grayscale(' + value * GRAYSCALE_MAX + ')';
-};
-
-var getSepia = function (value) {
-  return 'sepia(' + value * SEPIA_MAX + ')';
-};
-
-var getInvert = function (value) {
-  return 'invert(' + value * INVERT_MAX + '%)';
-};
-
-var getBlur = function (value) {
-  return 'blur(' + value * BLUR_MAX + 'px)';
-};
-
-var getBrightness = function (value) {
-  return 'brightness(' + value * BRIGHTNESS_MAX + BRIGHTNESS_MIN + ')';
+var getFilter = function (effect, value) {
+  var calculatedValue = value * effect.max + effect.min;
+  return effect.filter + '(' + calculatedValue + effect.unit + ')';
 };
 
 var onSetupSubmitClick = function (evt, form) {
@@ -189,6 +202,47 @@ var onSetupSubmitEnterKeydown = function (evt, form) {
   }
 };
 
+var onPhotoClick = function (evt) {
+  var picture = evt.target.closest('.picture');
+  if (picture) {
+    var pictureImg = picture.querySelector('.picture__img');
+    if (pictureImg) {
+      for (var i = 0; i < photosList.length; i++) {
+        if (pictureImg.src.includes(photosList[i].url)) {
+          createBigPicture(bigPictureEl, photosList[i]);
+          createBigPictureComment(bigPictureEl, photosList[i]);
+          bigPictureEl.classList.remove(HIDDEN_CLASS);
+          return;
+        }
+      }
+    }
+  }
+};
+
+var hashtagsValidation = function (hashtags) {
+  if (hashtags.length > 5) {
+    return 'Нельзя указать больше пяти хэш-тегов';
+  }
+
+  for (var i = 0; i < hashtags.length; i++) {
+    var hashtag = hashtags[i];
+    if (hashtag[0] !== '#') {
+      return 'Укажите символ # в начале хэштега';
+    }
+    console.log(hashtag.length);
+    if (hashtag.length <= 1 || hashtag.length > 20) {
+      return 'Длина хэштега должна быть от 1 до 20 символов';
+    }
+    var hashtagValidator = hashtag.match(/[\d\wа-я]/iug) || [];
+    if (hashtag.slice(1) !== hashtagValidator.join('')) {
+      return 'Строка после решётки должна состоять только из букв и чисел';
+    }
+    if (hashtags.indexOf(hashtag, i + 1) !== -1) {
+      return 'Нельзя использовать один и тот же хэштег два и более раз';
+    }
+  }
+};
+
 // создаем фоточки
 var photosList = createPhotos(PHOTOS_COUNT);
 
@@ -198,15 +252,15 @@ var picturesHome = document.querySelector('.pictures');
 var photosBlock = createPicturesBlock(photosList, pictureElItem);
 picturesHome.appendChild(photosBlock);
 
-var firstPhoto = photosList[0];
 var bigPictureEl = document.querySelector('.big-picture');
 
 picturesHome.addEventListener('click', function (evt) {
-  var picture = evt.target.closest('.picture');
-  if (picture) {
-    createBigPicture(bigPictureEl, firstPhoto);
-    createBigPictureComment(bigPictureEl, firstPhoto);
-    bigPictureEl.classList.remove(HIDDEN_CLASS);
+  onPhotoClick(evt);
+});
+
+picturesHome.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    onPhotoClick(evt);
   }
 });
 
@@ -233,52 +287,15 @@ var textDescription = document.querySelector('.text__description');
 var imgUploadForm = document.querySelector('.img-upload__form');
 var imgUploadSubmit = document.querySelector('.img-upload__submit');
 
-var effects = {
-  'chrome': getGrayscale,
-  'sepia': getSepia,
-  'marvin': getInvert,
-  'phobos': getBlur,
-  'heat': getBrightness,
-  'none': function () {
-    return '';
-  }
-};
-
 textHashtags.addEventListener('input', function (evt) {
   var inputElement = evt.target;
-  var hashtags = inputElement.value.trim();
+  var hashtags = inputElement.value.trim().toLowerCase();
   if (hashtags.length <= 0) {
     return;
   }
   hashtags = hashtags.split(' ');
-  var newHashtags = [];
-  function hashtagsValidation() {
-    if (hashtags.length > 5) {
-      return 'Нельзя указать больше пяти хэш-тегов';
-    }
 
-    for (var i = 0; i < hashtags.length; i++) {
-      var hashtag = hashtags[i];
-      if (hashtag[0] !== '#') {
-        return 'Укажите символ # в начале хэштега';
-      }
-      console.log(hashtag.length);
-      if (hashtag.length <= 1 || hashtag.length > 20) {
-        return 'Длина хэштега должна быть от 1 до 20 символов';
-      }
-      var hashtagValidator = hashtag.match(/[\d\wа-я]/iug) || [];
-      if (hashtag.slice(1) !== hashtagValidator.join('')) {
-        return 'Строка после решётки должна состоять только из букв и чисел';
-      }
-      if (newHashtags.includes(hashtag.toLowerCase())) {
-        return 'Нельзя использовать один и тот же хэштег два и более раз';
-      }
-      newHashtags.push(hashtag.toLowerCase());
-    }
-  }
-
-  var errorMessage = hashtagsValidation() || '';
-  console.log(errorMessage);
+  var errorMessage = hashtagsValidation(hashtags) || '';
   inputElement.setCustomValidity(errorMessage);
   inputElement.reportValidity();
 });
@@ -309,6 +326,7 @@ effectsList.addEventListener('change', function (evt) {
 
   imgUploadPreview.classList.value = 'img-upload__preview effects__preview--' + effect;
   imgUploadPreview.style.filter = '';
+  setImageScale(MAX_SCALE);
 
   if (effect === 'none') {
     imgUploadEffectLevel.classList.add(HIDDEN_CLASS);
@@ -324,23 +342,27 @@ effectLevelPin.addEventListener('mouseup', function (evt) {
   var effect = document.querySelector('.effects__radio:checked');
 
   if (effect) {
-    var filter = effects[effect.value];
-    var levelPart = levelValue / levelLineCoordinate.width;
-
-    imgUploadPreview.style.filter = filter(levelPart);
+    var filter = EFFECTS[effect.value];
+    if (filter) {
+      var levelPart = levelValue / levelLineCoordinate.width;
+      imgUploadPreview.style.filter = getFilter(filter, levelPart);
+    }
   }
 });
 
+var setImageScale = function (value) {
+  scaleControlValue.value = value + '%';
+  imgUploadPreview.style.transform = 'scale(' + value / 100 + ')';
+};
+
 scaleControlSmaller.addEventListener('click', function () {
   var valueResult = onScaleControlClick(MIN_SCALE, MAX_SCALE, -SCALE_STEP, scaleControlValue.value);
-  scaleControlValue.value = valueResult + '%';
-  imgUploadPreview.style.transform = 'scale(' + valueResult / 100 + ')';
+  setImageScale(valueResult);
 });
 
 scaleControlBigger.addEventListener('click', function () {
   var valueResult = onScaleControlClick(MIN_SCALE, MAX_SCALE, SCALE_STEP, scaleControlValue.value);
-  scaleControlValue.value = valueResult + '%';
-  imgUploadPreview.style.transform = 'scale(' + valueResult / 100 + ')';
+  setImageScale(valueResult);
 });
 
 bigPictureClose.addEventListener('click', function () {
