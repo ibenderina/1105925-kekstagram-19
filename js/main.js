@@ -232,7 +232,7 @@ var hashtagsValidation = function (hashtags) {
     if (hashtag.length <= 1 || hashtag.length > 20) {
       return 'Длина хэштега должна быть от 1 до 20 символов';
     }
-    var hashtagValidator = hashtag.match(new RegExp('[\d\wа-я]', 'ug')) || [];
+    var hashtagValidator = hashtag.match(new RegExp('[\\d\\wа-я]', 'ug')) || [];
     if (hashtag.slice(1) !== hashtagValidator.join('')) {
       return 'Строка после решётки должна состоять только из букв и чисел';
     }
