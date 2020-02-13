@@ -14,7 +14,7 @@ var MAX_SCALE = 100;
 var SCALE_STEP = 25;
 var HIDDEN_CLASS = 'hidden';
 var EFFECTS = {
-  chrome: {
+  'chrome': {
     min: 0,
     max: 1,
     unit: '',
@@ -229,11 +229,10 @@ var hashtagsValidation = function (hashtags) {
     if (hashtag[0] !== '#') {
       return 'Укажите символ # в начале хэштега';
     }
-    console.log(hashtag.length);
     if (hashtag.length <= 1 || hashtag.length > 20) {
       return 'Длина хэштега должна быть от 1 до 20 символов';
     }
-    var hashtagValidator = hashtag.match(/[\d\wа-я]/iug) || [];
+    var hashtagValidator = hashtag.match(new RegExp('[\d\wа-я]', 'ug')) || [];
     if (hashtag.slice(1) !== hashtagValidator.join('')) {
       return 'Строка после решётки должна состоять только из букв и чисел';
     }
@@ -241,6 +240,7 @@ var hashtagsValidation = function (hashtags) {
       return 'Нельзя использовать один и тот же хэштег два и более раз';
     }
   }
+  return '';
 };
 
 // создаем фоточки
@@ -295,7 +295,7 @@ textHashtags.addEventListener('input', function (evt) {
   }
   hashtags = hashtags.split(' ');
 
-  var errorMessage = hashtagsValidation(hashtags) || '';
+  var errorMessage = hashtagsValidation(hashtags);
   inputElement.setCustomValidity(errorMessage);
   inputElement.reportValidity();
 });
