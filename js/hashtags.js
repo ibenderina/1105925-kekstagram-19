@@ -31,6 +31,7 @@
     var inputElement = evt.target;
     var hashtags = inputElement.value.trim().toLowerCase();
     if (hashtags.length <= 0) {
+      inputElement.setCustomValidity('');
       return;
     }
     hashtags = hashtags.split(' ');
