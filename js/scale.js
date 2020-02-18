@@ -2,7 +2,7 @@
 
 (function () {
   var MIN_SCALE = 25;
-  var MAX_SCALE = 100;
+  window.MAX_SCALE = 100;
   var SCALE_STEP = 25;
   var scaleControlSmaller = document.querySelector('.scale__control--smaller');
   var scaleControlBigger = document.querySelector('.scale__control--bigger');
@@ -14,12 +14,12 @@
   };
 
   scaleControlSmaller.addEventListener('click', function () {
-    var valueResult = window.onScaleControlClick(MIN_SCALE, MAX_SCALE, -SCALE_STEP, scaleControlValue.value);
+    var valueResult = window.onScaleControlClick(MIN_SCALE, window.MAX_SCALE, -SCALE_STEP, scaleControlValue.value);
     window.setImageScale(valueResult);
   });
 
   scaleControlBigger.addEventListener('click', function () {
-    var valueResult = window.onScaleControlClick(MIN_SCALE, MAX_SCALE, SCALE_STEP, scaleControlValue.value);
+    var valueResult = window.onScaleControlClick(MIN_SCALE, window.MAX_SCALE, SCALE_STEP, scaleControlValue.value);
     window.setImageScale(valueResult);
   });
 })();
