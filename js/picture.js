@@ -57,7 +57,7 @@
     window.renderPhoto(evt);
   });
 
-  window.picture.smallPictures.addEventListener('keydown', function (evt) {
+  smallPictures.addEventListener('keydown', function (evt) {
     if (evt.key === window.utilities.ENTER_KEY) {
       window.renderPhoto(evt);
     }
