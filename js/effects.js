@@ -33,6 +33,7 @@
       filter: 'brightness'
     }
   };
+  var IMG_PREVIEW_CLASS = 'img-upload__preview effects__preview--';
   var effectsList = document.querySelector('.effects__list');
   var effectLevelPin = document.querySelector('.effect-level__pin');
   var effectLevelLine = document.querySelector('.effect-level__line');
@@ -44,14 +45,14 @@
     return effect.filter + '(' + calculatedValue + effect.unit + ')';
   };
 
-  var setFilterDepth = function (coords) {
+  var setFilterSaturation = function (coords) {
     var effect = document.querySelector('.effects__radio:checked');
 
     if (effect) {
       var filter = EFFECTS[effect.value];
       if (filter) {
         var levelPart = coords / effectLevelLine.clientWidth;
-        window.imgUploadPreview.style.filter = getFilter(filter, levelPart);
+        window.upload.imgUploadPreview.style.filter = getFilter(filter, levelPart);
       }
     }
   };
@@ -62,15 +63,15 @@
       effectLevelDepth.style.width = coords + 'px';
     }
 
-    setFilterDepth(coords);
+    setFilterSaturation(coords);
   };
 
   effectsList.addEventListener('change', function (evt) {
     var effect = evt.target.value;
 
-    window.imgUploadPreview.classList.value = 'img-upload__preview effects__preview--' + effect;
-    window.imgUploadPreview.style.filter = '';
-    window.setImageScale(window.MAX_SCALE);
+    window.upload.imgUploadPreview.classList.value = IMG_PREVIEW_CLASS + effect;
+    window.upload.imgUploadPreview.style.filter = '';
+    window.scale.setImageScale(window.scale.MAX_SCALE);
 
     if (effect === 'none') {
       imgUploadEffectLevel.classList.add(window.HIDDEN_CLASS);

@@ -1,25 +1,37 @@
 'use strict';
 
-var PHOTOS_COUNT = 25;
-var MIN_COMMENTS = 2;
-var MAX_COMMENTS = 9;
-var MIN_LIKES = 15;
-var MAX_LIKES = 200;
-
 (function () {
-  window.createPhotos = function (photosCount) {
+  var PHOTOS_COUNT = 25;
+  var MIN_COMMENTS = 2;
+  var MAX_COMMENTS = 9;
+  var MIN_LIKES = 15;
+  var MAX_LIKES = 200;
+  var PHOTO_ADDRESS = 'photos/';
+  var PHOTO_EXTENSION = '.jpg';
+  var pictureElItem = window.utilities.getTemplate('#picture');
+
+  var createPhotos = function (photosCount) {
     var photosArray = [];
 
     for (var i = 1; i <= photosCount; i++) {
-      var commentsCount = window.chooseRandomInt(MIN_COMMENTS, MAX_COMMENTS);
+      var commentsCount = window.utilities.chooseRandomInt(MIN_COMMENTS, MAX_COMMENTS);
       photosArray.push({
-        url: 'photos/' + i + '.jpg',
+        id: i,
+        url: PHOTO_ADDRESS + i + PHOTO_EXTENSION,
         description: '',
-        likes: window.chooseRandomInt(MIN_LIKES, MAX_LIKES),
-        comments: window.createComments(commentsCount)
+        likes: window.utilities.chooseRandomInt(MIN_LIKES, MAX_LIKES),
+        comments: window.comments.create(commentsCount)
       });
     }
     return photosArray;
+  };
+
+  var createPictureBlocks = function (photos, pictureElTemplate) {
+    var picturesList = new DocumentFragment();
+    for (var i = 0; i < PHOTOS_COUNT; i++) {
+      picturesList.appendChild(createPictureBlock(photos[i], pictureElTemplate));
+    }
+    return picturesList;
   };
 
   var createPictureBlock = function (picture, pictureElTemplate) {
@@ -28,6 +40,7 @@ var MAX_LIKES = 200;
     var pictureElLikes = createPictureBlockEl.querySelector('.picture__likes');
     var pictureElComments = createPictureBlockEl.querySelector('.picture__comments');
 
+    createPictureBlockEl.dataset.id = picture.id;
     pictureElImg.src = picture.url;
     pictureElLikes.textContent = picture.likes;
     pictureElComments.textContent = picture.comments.length.toString();
@@ -35,20 +48,25 @@ var MAX_LIKES = 200;
     return createPictureBlockEl;
   };
 
-  window.createPicturesBlock = function (photos, pictureElTemplate) {
-    var picturesList = new DocumentFragment();
-    for (var i = 0; i < PHOTOS_COUNT; i++) {
-      picturesList.appendChild(createPictureBlock(photos[i], pictureElTemplate));
+  var photosList = createPhotos(PHOTOS_COUNT);
+  var photosBlock = createPictureBlocks(photosList, pictureElItem);
+  var smallPictures = document.querySelector('.pictures');
+  smallPictures.appendChild(photosBlock);
+
+  smallPictures.addEventListener('click', function (evt) {
+    window.renderPhoto(evt);
+  });
+
+  window.picture.smallPictures.addEventListener('keydown', function (evt) {
+    if (evt.key === window.utilities.ENTER_KEY) {
+      window.renderPhoto(evt);
     }
-    return picturesList;
+  });
+
+  window.picture = {
+    create: createPhotos,
+    createBlock: createPictureBlock,
+    smallPictures: smallPictures,
+    photosList: photosList
   };
-
-  // создаем фоточки
-  window.photosList = window.createPhotos(window.PHOTOS_COUNT);
-
-  // создаем и размещаем DOM-элементы для фоточек
-  var pictureElItem = window.getTemplate('#picture');
-  window.picturesHome = document.querySelector('.pictures');
-  var photosBlock = window.createPicturesBlock(window.photosList, pictureElItem);
-  window.picturesHome.appendChild(photosBlock);
 })();
