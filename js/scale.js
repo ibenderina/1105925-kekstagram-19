@@ -10,7 +10,7 @@
 
   var setImageScale = function (value) {
     scaleControlValue.value = value + '%';
-    window.imgUploadPreview.style.transform = 'scale(' + value / 100 + ')';
+    window.upload.imgUploadPreview.style.transform = 'scale(' + value / 100 + ')';
   };
 
   scaleControlSmaller.addEventListener('click', function () {

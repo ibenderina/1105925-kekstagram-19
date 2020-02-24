@@ -52,7 +52,7 @@
       var filter = EFFECTS[effect.value];
       if (filter) {
         var levelPart = coords / effectLevelLine.clientWidth;
-        window.imgUploadPreview.style.filter = getFilter(filter, levelPart);
+        window.upload.imgUploadPreview.style.filter = getFilter(filter, levelPart);
       }
     }
   };
@@ -69,8 +69,8 @@
   effectsList.addEventListener('change', function (evt) {
     var effect = evt.target.value;
 
-    window.imgUploadPreview.classList.value = IMG_PREVIEW_CLASS + effect;
-    window.imgUploadPreview.style.filter = '';
+    window.upload.imgUploadPreview.classList.value = IMG_PREVIEW_CLASS + effect;
+    window.upload.imgUploadPreview.style.filter = '';
     window.scale.setImageScale(window.scale.MAX_SCALE);
 
     if (effect === 'none') {

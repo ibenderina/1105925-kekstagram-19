@@ -31,16 +31,6 @@
       document.body.classList.remove('modal-open');
     },
 
-    onSetupSubmitClick: function (evt, form) {
-      form.submit();
-    },
-
-    onSetupSubmitEnterKeydown: function (evt, form) {
-      if (evt.key === this.ENTER_KEY) {
-        this.onSetupSubmitClick(evt, form);
-      }
-    },
-
     onScaleControlClick: function (min, max, step, value) {
       value = parseInt(value, 10);
       var scaleValue = value + step;
