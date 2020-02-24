@@ -9,7 +9,7 @@
   var SAVE_URL = 'https://js.dump.academy/kekstagram';
   var STATUS_ANSWER = 'Статус ответа: ';
 
-  var request = function (URL, method, data, onLoad, onError) {
+  var request = function (URL, method, onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -30,15 +30,18 @@
     xhr.timeout = TIMEOUT; // 10s
 
     xhr.open(method, URL);
-    xhr.send(data);
+    return xhr;
   };
 
   var load = function (onLoad, onError) {
-    request(LOAD_URL, 'GET', null, onLoad, onError);
+    var xhr = request(LOAD_URL, 'GET', onLoad, onError);
+    xhr.send();
   };
 
   var save = function (data, onLoad, onError) {
-    request(SAVE_URL, 'POST', data, onLoad, onError);
+    var xhr = request(SAVE_URL, 'POST', onLoad, onError);
+    xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+    xhr.send(data);
   };
 
   window.backend = {
