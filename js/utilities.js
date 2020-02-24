@@ -26,9 +26,12 @@
       return null;
     },
 
-    onCloseWindowClick: function (element) {
+    onCloseWindowClick: function (element, form) {
       element.classList.add(this.HIDDEN_CLASS);
       document.body.classList.remove('modal-open');
+      if (form) {
+        form.reset();
+      }
     },
 
     onScaleControlClick: function (min, max, step, value) {

@@ -35,6 +35,7 @@
   };
   var IMG_PREVIEW_CLASS = 'img-upload__preview effects__preview--';
   var effectsList = document.querySelector('.effects__list');
+  var effectOriginal = document.querySelector('#effect-none');
   var effectLevelPin = document.querySelector('.effect-level__pin');
   var effectLevelLine = document.querySelector('.effect-level__line');
   var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
@@ -115,4 +116,6 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  window.effectOriginal = effectOriginal;
 })();

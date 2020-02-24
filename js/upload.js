@@ -13,8 +13,14 @@
     evt.preventDefault();
     var data = new FormData(form);
     window.backend.save(data, function () {
-      window.utilities.onCloseWindowClick(imgUploadOverlay);
-    }, window.upload.onPictureLoadError);
+      window.effectOriginal.click();
+      window.utilities.onCloseWindowClick(imgUploadOverlay, form);
+      onPictureLoadSuccess();
+    }, function () {
+      window.effectOriginal.click();
+      window.utilities.onCloseWindowClick(imgUploadOverlay, form);
+      onPictureLoadError();
+    });
   };
 
   var onSetupSubmitEnterKeydown = function (evt, form) {
@@ -23,16 +29,27 @@
     }
   };
 
-  var onPictureLoadError = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
-    node.style.position = 'absolute';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = '30px';
+  var onPictureMessage = function (messageType) {
+    var errorTemplate = window.utilities.getTemplate('#' + messageType).cloneNode(true);
+    var main = document.querySelector('main');
 
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
+    main.appendChild(errorTemplate);
+    window.addEventListener('keydown', function (evt) {
+      if (evt.key === window.utilities.ESC_KEY) {
+        errorTemplate.remove();
+      }
+    });
+    errorTemplate.addEventListener('click', function () {
+      errorTemplate.remove();
+    });
+  };
+
+  var onPictureLoadError = function () {
+    onPictureMessage('error');
+  };
+
+  var onPictureLoadSuccess = function () {
+    onPictureMessage('success');
   };
 
   uploadFile.addEventListener('change', function () {
