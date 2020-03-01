@@ -15,8 +15,9 @@
     var bigPictureCommentsBlock = bigPicture.querySelector('.social__comments');
     var bigPictureCommentItem = window.utilities.getTemplate('#social-comment');
     var photoComments = photo.comments;
+    window.comments.loaderBlock.classList.remove(window.utilities.HIDDEN_CLASS);
     var photoCommentsElement = window.comments.createBlock(photoComments, bigPictureCommentItem);
-
+    bigPictureCommentsBlock.innerHTML = '';
     bigPictureCommentsBlock.appendChild(photoCommentsElement);
   };
 
