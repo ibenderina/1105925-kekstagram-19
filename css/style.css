@@ -1322,6 +1322,7 @@ main {
   margin-bottom: 50px;
 
   font-size: 32px;
+  line-height: 45px;
 }
 
 .error__title::before {

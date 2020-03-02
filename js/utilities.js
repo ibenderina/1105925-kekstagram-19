@@ -1,10 +1,26 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_INTERVAL = 500; // ms
   window.utilities = {
     ESC_KEY: 'Escape',
     ENTER_KEY: 'Enter',
     HIDDEN_CLASS: 'hidden',
+
+    debounce: function (callback, debounceInterval) {
+      var lastTimeout = null;
+
+      return function () {
+        var parameters = arguments;
+        if (lastTimeout) {
+          window.clearTimeout(lastTimeout);
+        }
+        lastTimeout = window.setTimeout(function () {
+          callback.apply(null, parameters);
+        }, debounceInterval | DEBOUNCE_INTERVAL);
+      };
+    },
+
     chooseRandomEl: function (dataList) {
       var random = Math.floor(Math.random() * dataList.length);
 

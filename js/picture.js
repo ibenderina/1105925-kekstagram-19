@@ -1,7 +1,14 @@
 'use strict';
 
 (function () {
+  var RANDOM_COUNT = 10;
+
   var pictureElItem = window.utilities.getTemplate('#picture');
+  var imgFilters = document.querySelector('.img-filters');
+  var filterRandom = document.querySelector('#filter-random');
+  var filterDiscussed = document.querySelector('#filter-discussed');
+  var filterDefault = document.querySelector('#filter-default');
+  var imgFiltersButton = document.querySelectorAll('.img-filters__button');
 
   var createPictureBlocks = function (photos, pictureElTemplate) {
     var picturesList = new DocumentFragment();
@@ -25,17 +32,38 @@
     return createPictureBlockEl;
   };
 
+  var loadData = function (filterCb) {
+    window.backend.load(function (userPictures) {
+      userPictures.forEach(function (picture, i) {
+        picture.id = i;
+      });
+
+      if (filterCb) {
+        userPictures = filterCb(userPictures);
+      }
+      var photosBlock = createPictureBlocks(userPictures, pictureElItem);
+      window.picture.photosList = userPictures;
+      var pictures = document.querySelectorAll('.picture');
+      pictures.forEach(function (i) {
+        i.remove();
+      });
+      smallPictures.appendChild(photosBlock);
+      imgFilters.classList.remove('img-filters--inactive');
+    }, window.upload.onPictureLoadError);
+  };
+
+  var debouncedLoadData = window.utilities.debounce(loadData);
+
+  var activeFilterButton = function (activeElement) {
+    imgFiltersButton.forEach(function (item) {
+      item.classList.remove('img-filters__button--active');
+    });
+    activeElement.classList.add('img-filters__button--active');
+  };
+
   var smallPictures = document.querySelector('.pictures');
 
-  window.backend.load(function (userPictures) {
-    for (var i = 0; i < userPictures.length; i++) {
-      userPictures[i].id = i;
-    }
-    var photosBlock = createPictureBlocks(userPictures, pictureElItem);
-    window.picture.photosList = userPictures;
-    smallPictures.appendChild(photosBlock);
-  }, window.upload.onPictureLoadError
-  );
+  loadData();
 
   smallPictures.addEventListener('click', function (evt) {
     window.renderPhoto(evt);
@@ -45,6 +73,29 @@
     if (evt.key === window.utilities.ENTER_KEY) {
       window.renderPhoto(evt);
     }
+  });
+
+  filterRandom.addEventListener('click', function () {
+    activeFilterButton(filterRandom);
+    debouncedLoadData(function (userPictures) {
+      var random = Math.floor(Math.random() * (userPictures.length - RANDOM_COUNT));
+      return userPictures.slice(random, random + RANDOM_COUNT);
+    });
+
+  });
+
+  filterDiscussed.addEventListener('click', function () {
+    activeFilterButton(filterDiscussed);
+    debouncedLoadData(function (userPictures) {
+      return userPictures.slice().sort(function (left, right) {
+        return right.comments.length - left.comments.length;
+      });
+    });
+  });
+
+  filterDefault.addEventListener('click', function () {
+    activeFilterButton(filterDefault);
+    debouncedLoadData();
   });
 
   window.picture = {
