@@ -2,12 +2,16 @@
 
 (function () {
   var TIMEOUT = 10000;
-  var ERROR_CONNECT = 'Произошла ошибка соединения';
-  var ERROR_TIMELIMIT = 'Запрос не успел выполниться за ';
-  var TIMELIMIT = 'мс';
-  var LOAD_URL = 'https://js.dump.academy/kekstagram/data';
-  var SAVE_URL = 'https://js.dump.academy/kekstagram';
+  var TIME_LIMIT = 'мс';
   var STATUS_ANSWER = 'Статус ответа: ';
+  var Error = {
+    CONNECT: 'Произошла ошибка соединения',
+    TIME_LIMIT: 'Запрос не успел выполниться за '
+  };
+  var Url = {
+    LOAD: 'https://js.dump.academy/kekstagram/data',
+    SAVE: 'https://js.dump.academy/kekstagram'
+  };
 
   var request = function (URL, method, onLoad, onError) {
     var xhr = new XMLHttpRequest();
@@ -21,10 +25,10 @@
       }
     });
     xhr.addEventListener('error', function () {
-      onError(ERROR_CONNECT);
+      onError(Error.CONNECT);
     });
     xhr.addEventListener('timeout', function () {
-      onError(ERROR_TIMELIMIT + xhr.timeout + TIMELIMIT);
+      onError(Error.TIME_LIMIT + xhr.timeout + TIME_LIMIT);
     });
 
     xhr.timeout = TIMEOUT; // 10s
@@ -34,13 +38,12 @@
   };
 
   var load = function (onLoad, onError) {
-    var xhr = request(LOAD_URL, 'GET', onLoad, onError);
+    var xhr = request(Url.LOAD, 'GET', onLoad, onError);
     xhr.send();
   };
 
   var save = function (data, onLoad, onError) {
-    var xhr = request(SAVE_URL, 'POST', onLoad, onError);
-    xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+    var xhr = request(Url.SAVE, 'POST', onLoad, onError);
     xhr.send(data);
   };
 

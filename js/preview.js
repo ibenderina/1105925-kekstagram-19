@@ -43,7 +43,7 @@
   });
 
   document.addEventListener('keydown', function (evt) {
-    if (evt.key === window.utilities.ESC_KEY) {
+    if (evt.key === window.utilities.Key.ESC) {
       window.utilities.onCloseWindowClick(bigPictureEl);
     }
   });

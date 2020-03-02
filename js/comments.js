@@ -1,10 +1,13 @@
 'use strict';
 
 (function () {
-  var MIN_AVATARS = 1;
-  var MAX_AVATARS = 6;
+  var Avatar = {
+    MIN: 1,
+    MAX: 6,
+    ADDRESS: 'img/avatar-'
+  };
+
   var FILE_EXTENSION = '.svg';
-  var AVATAR_ADDRESS = 'img/avatar-';
   var MESSAGES = [
     'Всё отлично!',
     'В целом всё неплохо. Но не всё.',
@@ -34,7 +37,7 @@
 
       for (var j = 0; j < count; j++) {
         createNewComment.push({
-          avatar: AVATAR_ADDRESS + window.utilities.chooseRandomInt(MIN_AVATARS, MAX_AVATARS) + FILE_EXTENSION,
+          avatar: Avatar.ADDRESS + window.utilities.chooseRandomInt(Avatar.MIN, Avatar.MAX) + FILE_EXTENSION,
           message: window.utilities.chooseRandomEl(MESSAGES),
           name: window.utilities.chooseRandomEl(NAMES)
         });

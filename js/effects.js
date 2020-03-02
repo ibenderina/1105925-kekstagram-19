@@ -33,7 +33,8 @@
       filter: 'brightness'
     }
   };
-  var IMG_PREVIEW_CLASS = 'img-upload__preview effects__preview--';
+
+  var IMG_PREVIEW_CLASS = 'effects__preview--';
   var effectsList = document.querySelector('.effects__list');
   var effectOriginal = document.querySelector('#effect-none');
   var effectLevelPin = document.querySelector('.effect-level__pin');
@@ -72,7 +73,7 @@
 
     window.upload.imgUploadPreview.classList.value = IMG_PREVIEW_CLASS + effect;
     window.upload.imgUploadPreview.style.filter = '';
-    window.scale.setImageScale(window.scale.MAX_SCALE);
+    window.scale.setImageScale(window.scale.MAX);
 
     if (effect === 'none') {
       imgUploadEffectLevel.classList.add(window.utilities.HIDDEN_CLASS);
