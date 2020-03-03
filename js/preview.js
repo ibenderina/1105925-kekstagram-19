@@ -4,28 +4,26 @@
   var createBigPicture = function (bigPicture, photo) {
     var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
     var bigPictureLikes = bigPicture.querySelector('.likes-count');
-    var bigPictureCommentsCount = bigPicture.querySelector('.comments-count');
 
     bigPictureImg.src = photo.url;
     bigPictureLikes.textContent = photo.likes;
-    bigPictureCommentsCount.textContent = photo.comments.length.toString();
   };
 
   var createBigPictureComment = function (bigPicture, photo) {
     var bigPictureCommentsBlock = bigPicture.querySelector('.social__comments');
     var bigPictureCommentItem = window.utilities.getTemplate('#social-comment');
-    var photoComments = photo.comments;
-    window.comments.loaderBlock.classList.remove(window.utilities.HIDDEN_CLASS);
-    var photoCommentsElement = window.comments.createBlock(photoComments, bigPictureCommentItem);
+    var photoCommentsElement = window.comments.createBlock(photo.comments, bigPictureCommentItem);
     bigPictureCommentsBlock.innerHTML = '';
     bigPictureCommentsBlock.appendChild(photoCommentsElement);
+    window.comments.showHiddenComment();
+    window.comments.renderCommentCounter();
   };
 
   var renderPhoto = function (evt) {
     var picture = evt.target.closest('.picture');
     if (picture) {
       var pictureId = Number(picture.dataset.id);
-      var photoData = window.picture.photosList.find(function (photo) {
+      var photoData = window.photosList.find(function (photo) {
         return photo.id === pictureId;
       });
       if (photoData) {

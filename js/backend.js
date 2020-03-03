@@ -4,6 +4,7 @@
   var TIMEOUT = 10000;
   var TIME_LIMIT = 'мс';
   var STATUS_ANSWER = 'Статус ответа: ';
+  var SUCCESS_LOAD_STATUS = 200;
   var Error = {
     CONNECT: 'Произошла ошибка соединения',
     TIME_LIMIT: 'Запрос не успел выполниться за '
@@ -18,7 +19,7 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === SUCCESS_LOAD_STATUS) {
         onLoad(xhr.response);
       } else {
         onError(STATUS_ANSWER + xhr.status + ' ' + xhr.statusText);

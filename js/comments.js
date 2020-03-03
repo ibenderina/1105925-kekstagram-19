@@ -1,13 +1,15 @@
 'use strict';
 
 (function () {
-  var COMMENTS_COUNT = 5;
+  var Comment = {
+    MIN: 0,
+    MAX: 5
+  };
   var Avatar = {
     MIN: 1,
     MAX: 6,
     ADDRESS: 'img/avatar-'
   };
-
   var FILE_EXTENSION = '.svg';
   var MESSAGES = [
     'Всё отлично!',
@@ -25,23 +27,39 @@
     'Собаня',
     'Мышан'
   ];
-
-  var socialCommentCount = document.querySelector('.social__comment-count');
+  var shownSocialCommentCount = document.querySelector('.comments-count__shown');
+  var allSocialCommentCount = document.querySelector('.comments-count__all');
   var commentsLoader = document.querySelector('.comments-loader');
 
-  socialCommentCount.classList.add(window.utilities.HIDDEN_CLASS);
   commentsLoader.addEventListener('click', function () {
-    var ddd = document.querySelectorAll('.social__comment--hidden');
-    Array.from(ddd).slice(0, 5).forEach(function (item) {
+    var hiddenSocialComment = document.querySelectorAll('.social__comment--hidden');
+    Array.from(hiddenSocialComment).slice(Comment.MIN, Comment.MAX).forEach(function (item) {
       item.classList.remove('social__comment--hidden');
     });
-    if (ddd.length === 0) {
-      commentsLoader.classList.add(window.utilities.HIDDEN_CLASS);
-    }
+    renderCommentCounter();
+    showHiddenComment();
   });
 
+  var renderCommentCounter = function () {
+    var allComments = document.querySelectorAll('.social__comment').length;
+    var hiddenSocialComment = document.querySelectorAll('.social__comment--hidden');
+    var shownComments = allComments - hiddenSocialComment.length;
+    allSocialCommentCount.textContent = allComments.toString();
+    shownSocialCommentCount.textContent = shownComments.toString();
+  };
+
+  var showHiddenComment = function () {
+    var hiddenSocialComment = document.querySelectorAll('.social__comment--hidden').length;
+    if (hiddenSocialComment) {
+      commentsLoader.classList.remove(window.utilities.HIDDEN_CLASS);
+    } else {
+      commentsLoader.classList.add(window.utilities.HIDDEN_CLASS);
+    }
+  };
+
   window.comments = {
-    loaderBlock: commentsLoader,
+    showHiddenComment: showHiddenComment,
+    renderCommentCounter: renderCommentCounter,
 
     create: function (count) {
       var createNewComment = [];
@@ -62,7 +80,7 @@
       for (var i = 0; i < comments.length; i++) {
         var currentComment = comments[i];
         var bigPictureCommentElement = commentTemplate.cloneNode(true);
-        if (i >= COMMENTS_COUNT) {
+        if (i >= Comment.MAX) {
           bigPictureCommentElement.classList.add('social__comment--hidden');
         }
         var bigPictureCommentsImg = bigPictureCommentElement.querySelector('.social__picture');

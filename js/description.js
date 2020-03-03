@@ -15,7 +15,7 @@
   });
 
   textDescription.addEventListener('keydown', function (evt) {
-    if (evt.key === window.ESC_KEY) {
+    if (evt.key === window.utilities.Key.ESC) {
       evt.stopPropagation();
     }
   });

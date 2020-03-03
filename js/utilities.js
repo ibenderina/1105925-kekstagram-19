@@ -2,9 +2,11 @@
 
 (function () {
   var DEBOUNCE_INTERVAL = 500; // ms
+  var Key = {
+    ESC: 'Escape',
+    ENTER: 'Enter',
+  };
   window.utilities = {
-    ESC_KEY: 'Escape',
-    ENTER_KEY: 'Enter',
     HIDDEN_CLASS: 'hidden',
 
     debounce: function (callback, debounceInterval) {
@@ -58,5 +60,7 @@
       }
       return value;
     },
+
+    Key: Key
   };
 })();

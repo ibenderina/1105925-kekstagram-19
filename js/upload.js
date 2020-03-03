@@ -24,7 +24,7 @@
   };
 
   var onSetupSubmitEnterKeydown = function (evt, form) {
-    if (evt.key === window.utilities.ENTER_KEY) {
+    if (evt.key === window.utilities.Key.ENTER) {
       onSetupSubmitClick(evt, form);
     }
   };
@@ -35,7 +35,7 @@
 
     main.appendChild(errorTemplate);
     window.addEventListener('keydown', function (evt) {
-      if (evt.key === window.utilities.ESC_KEY) {
+      if (evt.key === window.utilities.Key.ESC) {
         errorTemplate.remove();
       }
     });
@@ -64,7 +64,7 @@
   });
 
   document.addEventListener('keydown', function (evt) {
-    if (evt.key === window.utilities.ESC_KEY) {
+    if (evt.key === window.utilities.Key.ESC) {
       window.utilities.onCloseWindowClick(imgUploadOverlay);
       uploadFile.value = '';
       imgUploadPreview.style.transform = 'scale(1)';
