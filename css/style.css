@@ -978,6 +978,10 @@ main {
   padding-left: 65px;
 }
 
+.social__comment--hidden {
+  display: none;
+}
+
 .social__comments-loader {
   padding: 0;
   padding-left: 65px;

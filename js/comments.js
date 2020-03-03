@@ -1,12 +1,15 @@
 'use strict';
 
 (function () {
+  var Comment = {
+    MIN: 0,
+    MAX: 5
+  };
   var Avatar = {
     MIN: 1,
     MAX: 6,
     ADDRESS: 'img/avatar-'
   };
-
   var FILE_EXTENSION = '.svg';
   var MESSAGES = [
     'Всё отлично!',
@@ -24,14 +27,40 @@
     'Собаня',
     'Мышан'
   ];
-
-  var socialCommentCount = document.querySelector('.social__comment-count');
+  var shownSocialCommentCount = document.querySelector('.comments-count__shown');
+  var allSocialCommentCount = document.querySelector('.comments-count__all');
   var commentsLoader = document.querySelector('.comments-loader');
 
-  socialCommentCount.classList.add(window.utilities.HIDDEN_CLASS);
-  commentsLoader.classList.add(window.utilities.HIDDEN_CLASS);
+  commentsLoader.addEventListener('click', function () {
+    var hiddenSocialComment = document.querySelectorAll('.social__comment--hidden');
+    Array.from(hiddenSocialComment).slice(Comment.MIN, Comment.MAX).forEach(function (item) {
+      item.classList.remove('social__comment--hidden');
+    });
+    renderCommentCounter();
+    showHiddenComment();
+  });
+
+  var renderCommentCounter = function () {
+    var allComments = document.querySelectorAll('.social__comment').length;
+    var hiddenSocialComment = document.querySelectorAll('.social__comment--hidden');
+    var shownComments = allComments - hiddenSocialComment.length;
+    allSocialCommentCount.textContent = allComments.toString();
+    shownSocialCommentCount.textContent = shownComments.toString();
+  };
+
+  var showHiddenComment = function () {
+    var hiddenSocialComment = document.querySelectorAll('.social__comment--hidden').length;
+    if (hiddenSocialComment) {
+      commentsLoader.classList.remove(window.utilities.HIDDEN_CLASS);
+    } else {
+      commentsLoader.classList.add(window.utilities.HIDDEN_CLASS);
+    }
+  };
 
   window.comments = {
+    showHiddenComment: showHiddenComment,
+    renderCommentCounter: renderCommentCounter,
+
     create: function (count) {
       var createNewComment = [];
 
@@ -51,6 +80,9 @@
       for (var i = 0; i < comments.length; i++) {
         var currentComment = comments[i];
         var bigPictureCommentElement = commentTemplate.cloneNode(true);
+        if (i >= Comment.MAX) {
+          bigPictureCommentElement.classList.add('social__comment--hidden');
+        }
         var bigPictureCommentsImg = bigPictureCommentElement.querySelector('.social__picture');
         var bigPictureCommentsText = bigPictureCommentElement.querySelector('.social__text');
 
