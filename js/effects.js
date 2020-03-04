@@ -33,7 +33,6 @@
       filter: 'brightness'
     }
   };
-
   var IMG_PREVIEW_CLASS = 'effects__preview--';
   var effectsList = document.querySelector('.effects__list');
   var effectOriginal = document.querySelector('#effect-none');
@@ -59,7 +58,7 @@
     }
   };
 
-  var effectLevelCoords = function (coords) {
+  var setEffectLevelCoords = function (coords) {
     if (coords >= 0 && coords <= effectLevelLine.clientWidth) {
       effectLevelPin.style.left = coords + 'px';
       effectLevelDepth.style.width = coords + 'px';
@@ -79,7 +78,7 @@
       imgUploadEffectLevel.classList.add(window.utilities.HIDDEN_CLASS);
     } else {
       imgUploadEffectLevel.classList.remove(window.utilities.HIDDEN_CLASS);
-      effectLevelCoords(effectLevelLine.clientWidth);
+      setEffectLevelCoords(effectLevelLine.clientWidth);
     }
   });
 
@@ -96,7 +95,7 @@
       startCoords = moveEvt.clientX;
       var coords = (effectLevelPin.offsetLeft - shift);
 
-      effectLevelCoords(coords);
+      setEffectLevelCoords(coords);
     };
 
     var onMouseUp = function (upEvt) {
@@ -106,11 +105,11 @@
       document.removeEventListener('mouseup', onMouseUp);
 
       if (trigger) {
-        var onClickPreventDefault = function (clickEvt) {
+        var onPreventDefaultClick = function (clickEvt) {
           clickEvt.preventDefault();
-          effectLevelPin.removeEventListener('click', onClickPreventDefault);
+          effectLevelPin.removeEventListener('click', onPreventDefaultClick);
         };
-        effectLevelPin.addEventListener('click', onClickPreventDefault);
+        effectLevelPin.addEventListener('click', onPreventDefaultClick);
       }
     };
 

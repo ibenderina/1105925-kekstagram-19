@@ -751,6 +751,11 @@ main {
   border-radius: 5px;
 }
 
+.text__hashtags--invalid:focus {
+  outline: none;
+  border-color: red;
+}
+
 .text__description {
   width: 450px;
   height: 100px;

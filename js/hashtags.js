@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var FIRST_SYMBOL = '#';
+  var SYMBOL_PATTERN = new RegExp('[\\d\\wа-я]', 'ug');
+  var ERROR_BORDER = 'text__hashtags--invalid';
   var Error = {
     AMOUNT: 'Нельзя указать больше пяти хэш-тегов',
     FIRST_SYMBOL: 'Укажите символ # в начале хэштега',
@@ -13,13 +16,9 @@
     MIN_HASHTAG: 1,
     MAX_HASHTAG: 20
   };
-
-  var FIRST_SYMBOL = '#';
-  var SYMBOL_PATTERN = new RegExp('[\\d\\wа-я]', 'ug');
-
   var textHashtags = document.querySelector('.text__hashtags');
 
-  var hashtagsValidation = function (hashtags) {
+  var setHashtagsValidation = function (hashtags) {
     if (hashtags.length > Length.MAX) {
       return Error.AMOUNT;
     }
@@ -52,9 +51,12 @@
     }
     hashtags = hashtags.split(' ');
 
-    var errorMessage = hashtagsValidation(hashtags);
+    var errorMessage = setHashtagsValidation(hashtags);
     inputElement.setCustomValidity(errorMessage);
     inputElement.reportValidity();
+    if (!errorMessage) {
+      inputElement.classList.remove(ERROR_BORDER);
+    }
   });
 
   textHashtags.addEventListener('keydown', function (evt) {

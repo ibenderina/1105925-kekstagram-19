@@ -5,24 +5,22 @@
 
   var pictureElItem = window.utilities.getTemplate('#picture');
   var imgFilters = document.querySelector('.img-filters');
-  var filterRandom = document.querySelector('#filter-random');
-  var filterDiscussed = document.querySelector('#filter-discussed');
-  var filterDefault = document.querySelector('#filter-default');
+  var filterRandom = document.querySelectorAll('.img-filters__button');
   var imgFiltersButton = document.querySelectorAll('.img-filters__button');
   var smallPictures = document.querySelector('.pictures');
 
   var filters = {
-    'random': function () {
+    'filter-random': function () {
       var random = Math.floor(Math.random() * (window.photosList.length - RANDOM_COUNT));
       renderPictures(window.photosList.slice(random, random + RANDOM_COUNT));
     },
-    'discussed': function () {
+    'filter-discussed': function () {
       var sortedPhotos = window.photosList.slice().sort(function (left, right) {
         return right.comments.length - left.comments.length;
       });
       renderPictures(sortedPhotos);
     },
-    'default': function () {
+    'filter-default': function () {
       renderPictures(window.photosList);
     }
   };
@@ -69,19 +67,19 @@
     }, window.upload.onPictureLoadError);
   };
 
+  var setActiveFilterButton = function (activeElement) {
+    imgFiltersButton.forEach(function (item) {
+      item.classList.remove('img-filters__button--active');
+    });
+    activeElement.classList.add('img-filters__button--active');
+  };
+
   var filterData = window.utilities.debounce(function (filter) {
     var filterCb = filters[filter];
     if (filterCb) {
       filterCb();
     }
   });
-
-  var activeFilterButton = function (activeElement) {
-    imgFiltersButton.forEach(function (item) {
-      item.classList.remove('img-filters__button--active');
-    });
-    activeElement.classList.add('img-filters__button--active');
-  };
 
   loadData();
 
@@ -95,18 +93,14 @@
     }
   });
 
-  filterRandom.addEventListener('click', function () {
-    activeFilterButton(filterRandom);
-    filterData('random');
+  filterRandom.forEach(function (item) {
+    item.addEventListener('click', function (evt) {
+      var element = evt.target;
+      if (!element.classList.contains('img-filters__button--active') || element.id === 'filter-random') {
+        setActiveFilterButton(element);
+        filterData(element.id);
+      }
+    });
   });
-
-  filterDiscussed.addEventListener('click', function () {
-    activeFilterButton(filterDiscussed);
-    filterData('discussed');
-  });
-
-  filterDefault.addEventListener('click', function () {
-    activeFilterButton(filterDefault);
-    filterData('default');
-  });
+  window.filterRandom = filterRandom;
 })();

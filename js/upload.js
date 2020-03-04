@@ -1,13 +1,17 @@
 'use strict';
 
 (function () {
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var ERROR_BORDER = 'text__hashtags--invalid';
   var imgUploadPreviewWrapper = document.querySelector('.img-upload__preview');
   var imgUploadPreview = imgUploadPreviewWrapper.querySelector('img');
   var imgUploadOverlay = document.querySelector('.img-upload__overlay');
-  var imgUploadCancel = document.querySelector('.img-upload__cancel');
+  var imgUploadCancel = document.querySelector('#upload-cancel');
   var uploadFile = document.querySelector('#upload-file');
   var imgUploadForm = document.querySelector('.img-upload__form');
   var imgUploadSubmit = document.querySelector('.img-upload__submit');
+  var uploadPreview = document.querySelector('.img-upload__preview img');
+  var uploadSmallPreview = document.querySelectorAll('.effects__preview');
 
   var onSetupSubmitClick = function (evt, form) {
     evt.preventDefault();
@@ -16,6 +20,14 @@
       window.effectOriginal.click();
       window.utilities.onCloseWindowClick(imgUploadOverlay, form);
       onPictureLoadSuccess();
+      window.photosList.push({
+        id: window.photosList.length,
+        url: uploadPreview.src,
+        likes: 0,
+        comments: [],
+        description: data.get('description') + ' ' + data.get('hashtags')
+      });
+      window.filterRandom[0].click();
     }, function () {
       window.effectOriginal.click();
       window.utilities.onCloseWindowClick(imgUploadOverlay, form);
@@ -53,6 +65,28 @@
   };
 
   uploadFile.addEventListener('change', function () {
+    var file = uploadFile.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        uploadPreview.src = reader.result;
+        var backgroundImage = 'url(' + reader.result + ')';
+        uploadSmallPreview.forEach(function (item) {
+          item.style.backgroundImage = backgroundImage;
+        });
+      });
+
+      reader.readAsDataURL(file);
+    }
+  });
+
+  uploadFile.addEventListener('change', function () {
     imgUploadOverlay.classList.remove(window.utilities.HIDDEN_CLASS);
     document.body.classList.add('modal-open');
   });
@@ -71,7 +105,13 @@
     }
   });
 
-  imgUploadSubmit.addEventListener('click', function (evt) {
+  imgUploadForm.addEventListener('submit', function (evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    var invalid = imgUploadForm.querySelectorAll('input:invalid');
+    invalid.forEach(function (item) {
+      item.classList.add(ERROR_BORDER);
+    });
     if (imgUploadForm.checkValidity()) {
       onSetupSubmitClick(evt, imgUploadForm);
     }
