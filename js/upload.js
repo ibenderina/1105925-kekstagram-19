@@ -105,16 +105,16 @@
     }
   });
 
-  imgUploadForm.addEventListener('submit', function (evt) {
-    evt.stopPropagation();
+  imgUploadSubmit.addEventListener('click', function (evt) {
     evt.preventDefault();
-    var invalid = imgUploadForm.querySelectorAll('input:invalid');
-    invalid.forEach(function (item) {
+    var invalids = imgUploadForm.querySelectorAll('input:invalid');
+    invalids.forEach(function (item) {
       item.classList.add(ERROR_BORDER);
     });
     if (imgUploadForm.checkValidity()) {
       onSetupSubmitClick(evt, imgUploadForm);
     }
+    imgUploadForm.reportValidity();
   });
 
   imgUploadSubmit.addEventListener('keydown', function (evt) {

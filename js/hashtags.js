@@ -45,16 +45,14 @@
   textHashtags.addEventListener('input', function (evt) {
     var inputElement = evt.target;
     var hashtags = inputElement.value.trim().toLowerCase();
-    if (hashtags.length <= 0) {
-      inputElement.setCustomValidity('');
-      return;
+    var errorMessage = '';
+    if (hashtags.length > 0) {
+      hashtags = hashtags.split(' ');
+      errorMessage = setHashtagsValidation(hashtags);
     }
-    hashtags = hashtags.split(' ');
-
-    var errorMessage = setHashtagsValidation(hashtags);
     inputElement.setCustomValidity(errorMessage);
     inputElement.reportValidity();
-    if (!errorMessage) {
+    if (errorMessage === '') {
       inputElement.classList.remove(ERROR_BORDER);
     }
   });

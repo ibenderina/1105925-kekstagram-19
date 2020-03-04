@@ -7,7 +7,6 @@
     ENTER: 'Enter',
   };
   window.utilities = {
-    ERROR_COLOR: 'red',
     HIDDEN_CLASS: 'hidden',
 
     debounce: function (callback, debounceInterval) {
